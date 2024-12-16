@@ -43,20 +43,7 @@ const NavItem = ({ item, isActive, onClick }) => (
   </div>
 );
 
-// Content components for each section
-const TopNavConfig = () => (
-  <div className="p-8">
-    <h2 className="text-2xl font-bold text-gray-900 mb-4">Top Navigation Configuration</h2>
-    {/* Add your TopNav configuration form/content here */}
-  </div>
-);
 
-const HeroConfig = () => (
-  <div className="p-8">
-    <h2 className="text-2xl font-bold text-gray-900 mb-4">Hero Section Configuration</h2>
-    {/* Add your Hero configuration form/content here */}
-  </div>
-);
 
 // Add similar components for other sections...
 
