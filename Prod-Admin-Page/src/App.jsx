@@ -75,7 +75,7 @@ function App() {
       <Routes>
         
         <Route
-          path="/admin"
+          path="/site/:id"
           element={<AdminPage navConfig={navConfig} setNavConfig={setNavConfig} />}
         />
         <Route
@@ -91,15 +91,15 @@ function App() {
           element={<AdminHomePage  />}
         />
         <Route
-          path="/admin/topnav"
+          path="/admin/topnav/:id"
           element={<NavUpdate config={navConfig} setConfig={setNavConfig} />}
         />
         <Route
-          path="/admin/hero"
+          path="/admin/hero/:id"
           element={<HeroUpdate heroConfig={heroConfig} setHeroConfig={setHeroConfig} />}
         />
         <Route
-          path="/admin/feature"
+          path="/admin/feature/:id"
           element={
             <FeatureUpdate
               featureConfig={featureConfig}
@@ -108,11 +108,11 @@ function App() {
           }
         />
         <Route
-          path="/admin/kpi"
+          path="/admin/kpi/:id"
           element={<KpiUpdate kpiSection={kpiConfig} setKpiSection={setKpiConfig} />}
         />
         <Route
-          path="/admin/video"
+          path="/admin/video/:id"
           element={
             <VideoSectionUpdate
               videoConfig={videoConfig}
@@ -121,21 +121,21 @@ function App() {
           }
         />
         <Route
-          path="/admin/trust"
+          path="/admin/trust/:id"
           element={
             <TrustUpdate trustConfig={trustConfig} setTrustConfig={setTrustConfig} />
           }
         />
         <Route
-          path="/admin/article"
+          path="/admin/article/:id"
           element={<ArticlesUpdate articles={articles} setArticles={setArticles} />}
         />
         <Route
-          path="/admin/footer"
+          path="/admin/footer/:id"
           element={<FooterUpdate footerConfig={footerConfig} setFooterConfig={setFooterConfig} />}
         />
          <Route
-          path="/admin/cta"
+          path="/admin/cta/:id"
           element={<CtaUpdate ctaConfig={ctaConfig} setCtaConfig={setCtaConfig} />}
         />
       </Routes>

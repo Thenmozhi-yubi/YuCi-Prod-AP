@@ -1,19 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Retrieve the 'id' from the URL
+
+  const handleNavigation = (path) => {
+    navigate(`${path}/${id}`); // Pass the id to the route
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-8">
       {/* Page Header */}
-      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Admin Panel</h2>
+      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Admin Panel for Site {id}</h2>
 
       {/* Grid Container */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {/* TopNav Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/topnav")}
+          onClick={() => handleNavigation("/admin/topnav")}
         >
           <h3 className="text-xl font-semibold text-gray-800">TopNav</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -24,7 +29,7 @@ const AdminPage = () => {
         {/* Hero Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/hero")}
+          onClick={() => handleNavigation("/admin/hero")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Hero</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -35,7 +40,7 @@ const AdminPage = () => {
         {/* Feature Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/feature")}
+          onClick={() => handleNavigation("/admin/feature")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Feature</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -46,7 +51,7 @@ const AdminPage = () => {
         {/* KPI Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/kpi")}
+          onClick={() => handleNavigation("/admin/kpi")}
         >
           <h3 className="text-xl font-semibold text-gray-800">KPI</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -57,7 +62,7 @@ const AdminPage = () => {
         {/* Video Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/video")}
+          onClick={() => handleNavigation("/admin/video")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Video</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -68,7 +73,7 @@ const AdminPage = () => {
         {/* Trust Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/trust")}
+          onClick={() => handleNavigation("/admin/trust")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Trust</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -79,7 +84,7 @@ const AdminPage = () => {
         {/* Article Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/article")}
+          onClick={() => handleNavigation("/admin/article")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Article</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -90,7 +95,7 @@ const AdminPage = () => {
         {/* Footer Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/footer")}
+          onClick={() => handleNavigation("/admin/footer")}
         >
           <h3 className="text-xl font-semibold text-gray-800">Footer</h3>
           <p className="text-sm text-gray-500 mt-2">
@@ -101,7 +106,7 @@ const AdminPage = () => {
         {/* CTA Card */}
         <div
           className="bg-white border border-gray-200 rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl transition p-6 cursor-pointer"
-          onClick={() => navigate("/admin/cta")}
+          onClick={() => handleNavigation("/admin/cta")}
         >
           <h3 className="text-xl font-semibold text-gray-800">CTA</h3>
           <p className="text-sm text-gray-500 mt-2">
