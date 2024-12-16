@@ -12,6 +12,9 @@ import ArticlesUpdate from "./Pages/ArticlesUpdate";
 import FooterUpdate from "./Pages/FooterUpdate";
 import configData from "./config";
 import CtaUpdate from "./Pages/CtaUpdate";
+import AdminHomePage from "./Pages/AdminHomePage";
+import CreateSiteForm from "./Pages/CreateSiteForm";
+import SitesList from "./Pages/SitesList";
 
 function App() {
   const [navConfig, setNavConfig] = useState(configData.navConfig);
@@ -72,8 +75,20 @@ function App() {
       <Routes>
         
         <Route
-          path="/"
+          path="/admin"
           element={<AdminPage navConfig={navConfig} setNavConfig={setNavConfig} />}
+        />
+        <Route
+          path="/createsite"
+          element={<CreateSiteForm />}
+        />
+         <Route
+          path="/listsite"
+          element={<SitesList />}
+        />
+        <Route
+          path="/"
+          element={<AdminHomePage  />}
         />
         <Route
           path="/admin/topnav"
