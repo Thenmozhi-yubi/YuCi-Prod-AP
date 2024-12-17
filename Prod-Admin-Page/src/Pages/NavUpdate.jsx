@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TopNav from "../components/TopNav"; // Import the TopNav component for live preview
 import { BASE_URL } from "../Constant";
 
-const NavUpdate = ({ setConfig }) => {
+const NavUpdate = () => {
   const { id } = useParams();
   const [logo, setLogo] = useState("");
   const [useCases, setUseCases] = useState([]);
@@ -91,8 +91,7 @@ const NavUpdate = ({ setConfig }) => {
       if (response.ok) {
         const data = await response.json();
         console.log(isNew ? "TopNav created" : "TopNav updated", data);
-        setConfig(updatedConfig); // Update the parent config state
-        navigate("/"); // Redirect to home page
+        alert("Updated Successfully");
       } else {
         throw new Error("Failed to save changes");
       }
