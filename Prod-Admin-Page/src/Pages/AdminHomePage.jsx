@@ -104,13 +104,18 @@ const AdminHomePage = () => {
     { icon: <SettingsIcon />, title: 'Settings', description: 'Configure global settings and preferences' },
     { icon: <ActivityIcon />, title: 'Recent Activity', description: 'Track recent changes and updates' }
   ];
-
+ const logo = "https://www.go-yubi.com/wp-content/uploads/2022/12/Yubi-900x0-1.png";
   return (
     <div className="min-h-screen bg-white">
       {/* Top Stats Bar */}
       <div className="bg-white border-b py-4 px-6 mb-8 shadow-sm">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#FD7149]">Welcome back, Admin</h1>
+          {/* <h1 className="text-2xl font-bold text-[#FD7149]">{logo}</h1> */}
+          <img 
+    src={logo} 
+    alt="Yubi Logo" 
+    className="w-32 h-auto"
+  />
           <div className="flex gap-6">
             {stats.map((stat) => (
               <div key={stat.label} 

@@ -1,47 +1,105 @@
-import  { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import TopNav from "../components/TopNav"; // Import the TopNav component for live preview
+import { BASE_URL } from "../Constant";
 
 const NavUpdate = ({ setConfig }) => {
+  const { id } = useParams();
   const [logo, setLogo] = useState("");
   const [useCases, setUseCases] = useState([]);
   const [ctaText, setCtaText] = useState("");
   const [ctaLink, setCtaLink] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isNew, setIsNew] = useState(false); // Flag to track if this is a new entry
   const navigate = useNavigate();
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
 
-  // Load the config from localStorage on initial mount
+  // Load the config from the API on initial mount
   useEffect(() => {
-    const savedConfig = JSON.parse(localStorage.getItem("config"));
-    if (savedConfig) {
-      setLogo(savedConfig.logo || "");
-      setUseCases(savedConfig.useCases || []);
-      setCtaText(savedConfig.cta?.text || "");
-      setCtaLink(savedConfig.cta?.link || "");
-    }
-  }, []);
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/topnav`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "siteid": id,
+          },
+        });
 
-  // Check if there are any changes in the input fields
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            const topNavConfig = data[0]; // Assuming the first item in the array
+            setLogo(topNavConfig.Logo_URL || "");
+            setUseCases(topNavConfig.use_cases || []);
+            setCtaText(topNavConfig.CTA_Text || "");
+            setCtaLink(topNavConfig.CTA_Link || "");
+          } else {
+            setIsNew(true); // Set to true if no data exists
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching topnav configuration:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConfig();
+  }, [id]);
+
   const hasChanges =
     logo !== "" ||
     useCases.length > 0 ||
     ctaText !== "" ||
     ctaLink !== "";
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const updatedConfig = {
-      logo,
-      useCases,
-      cta: { text: ctaText, link: ctaLink },
+      Logo_URL: logo,
+      use_cases: useCases,
+      CTA_Text: ctaText,
+      CTA_Link: ctaLink,
     };
 
-    // Save the config to localStorage
-    localStorage.setItem("config", JSON.stringify(updatedConfig));
+    try {
+      let response;
+      if (isNew) {
+        // If it's a new entry, use POST to create
+        response = await fetch(`${BASE_URL}/api/topnav`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "siteid": id,
+          },
+          body: JSON.stringify(updatedConfig),
+        });
+      } else {
+        // If data exists, use PUT to update
+        response = await fetch(`${BASE_URL}/api/topnav`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "siteid": id,
+          },
+          body: JSON.stringify(updatedConfig),
+        });
+      }
 
-    // Update the parent config state
-    setConfig(updatedConfig);
-
-    // Redirect to home page
-    navigate("/");
+      if (response.ok) {
+        const data = await response.json();
+        console.log(isNew ? "TopNav created" : "TopNav updated", data);
+        setConfig(updatedConfig); // Update the parent config state
+        navigate("/"); // Redirect to home page
+      } else {
+        throw new Error("Failed to save changes");
+      }
+    } catch (error) {
+      console.error("Error saving TopNav configuration:", error);
+      alert("Error saving TopNav configuration");
+    }
   };
 
   const handleUseCaseChange = (index, value) => {
@@ -59,8 +117,11 @@ const NavUpdate = ({ setConfig }) => {
     setUseCases(updatedUseCases);
   };
 
-  // Create a single object for navConfig
   const navConfig = { logo, useCases, cta: { text: ctaText, link: ctaLink } };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading message while fetching data
+  }
 
   return (
     <div className="container mx-auto px-4 py-6">

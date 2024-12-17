@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Feature from "../components/Feature";
 
 const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
-  const [formData, setFormData] = useState(featureConfig.heading);
-  const [features, setFeatures] = useState(featureConfig.features);
+  const [formData, setFormData] = useState(featureConfig?.heading);
+  const [features, setFeatures] = useState(featureConfig?.features);
   const navigate = useNavigate();
 
   const handleHeadingChange = (e) => {
@@ -22,7 +22,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
 
   const addFeature = () => {
     const newFeature = {
-      id: features.length + 1,
+      id: features?.length + 1,
       title: "",
       subtitle: "",
       content: "",
@@ -57,7 +57,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
             <input
               type="text"
               name="title"
-              value={formData.title}
+              value={formData?.title}
               onChange={handleHeadingChange}
               className="w-full px-4 py-2 border rounded-md"
             />
@@ -65,26 +65,26 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
             <input
               type="text"
               name="subtitle"
-              value={formData.subtitle}
+              value={formData?.subtitle}
               onChange={handleHeadingChange}
               className="w-full px-4 py-2 border rounded-md"
             />
             <label className="block text-gray-700 font-medium mt-2">Heading Description:</label>
             <textarea
               name="description"
-              value={formData.description}
+              value={formData?.description}
               onChange={handleHeadingChange}
               className="w-full px-4 py-2 border rounded-md"
             ></textarea>
           </div>
 
-          {features.map((feature) => (
+          {features?.map((feature) => (
             <div key={feature.id} className="mb-6 border p-4 rounded-md">
               <h3 className="text-lg font-medium mb-2">Feature {feature.id}</h3>
               <input
                 type="text"
                 placeholder="Title"
-                value={feature.title}
+                value={feature?.title}
                 onChange={(e) =>
                   handleFeatureChange(feature.id, "title", e.target.value)
                 }
@@ -93,7 +93,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
               <input
                 type="text"
                 placeholder="Subtitle"
-                value={feature.subtitle}
+                value={feature?.subtitle}
                 onChange={(e) =>
                   handleFeatureChange(feature.id, "subtitle", e.target.value)
                 }
@@ -101,7 +101,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
               />
               <textarea
                 placeholder="Content"
-                value={feature.content}
+                value={feature?.content}
                 onChange={(e) =>
                   handleFeatureChange(feature.id, "content", e.target.value)
                 }
@@ -110,7 +110,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
               <input
                 type="text"
                 placeholder="Image URL"
-                value={feature.image}
+                value={feature?.image}
                 onChange={(e) =>
                   handleFeatureChange(feature.id, "image", e.target.value)
                 }
@@ -119,7 +119,7 @@ const FeatureUpdate = ({ featureConfig, setFeatureConfig }) => {
               <input
                 type="text"
                 placeholder="Button Text"
-                value={feature.buttonText}
+                value={feature?.buttonText}
                 onChange={(e) =>
                   handleFeatureChange(feature.id, "buttonText", e.target.value)
                 }

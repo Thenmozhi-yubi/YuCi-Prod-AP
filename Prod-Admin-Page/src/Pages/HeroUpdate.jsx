@@ -1,41 +1,110 @@
-import  { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../Constant";
 
-const HeroUpdate = ({ heroConfig, setHeroConfig }) => {
-  const [title, setTitle] = useState(heroConfig.title);
-  const [subtitle, setSubtitle] = useState(heroConfig.subtitle);
-  const [bgImage, setBgImage] = useState(heroConfig.bgImage);
-  const [buttonText, setButtonText] = useState(heroConfig.buttonText);
-  const [buttonBgColor, setButtonBgColor] = useState(heroConfig.buttonBgColor);
-  const [buttonTextColor, setButtonTextColor] = useState(heroConfig.buttonTextColor);
+const HeroUpdate = () => {
+  const { id } = useParams(); // siteid passed via route params
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [bgImage, setBgImage] = useState("");
+  const [buttonText, setButtonText] = useState("");
+  const [buttonBgColor, setButtonBgColor] = useState("");
+  const [buttonTextColor, setButtonTextColor] = useState("");
+
+  const [loading, setLoading] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [saveType, setSaveType] = useState("POST"); // POST or PUT
 
   const navigate = useNavigate();
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
 
-  const hasChanges =
-    title !== heroConfig.title ||
-    subtitle !== heroConfig.subtitle ||
-    bgImage !== heroConfig.bgImage ||
-    buttonText !== heroConfig.buttonText ||
-    buttonBgColor !== heroConfig.buttonBgColor ||
-    buttonTextColor !== heroConfig.buttonTextColor;
+  // Fetch initial hero configuration
+  useEffect(() => {
+    const fetchHeroConfig = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/hero`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "siteid": id, // Pass siteid as a custom header
+          },
+        });
 
-  const saveChanges = () => {
-    const updatedConfig = {
-      title,
-      subtitle,
-      bgImage,
-      buttonText,
-      buttonBgColor,
-      buttonTextColor,
+        if (!response.ok) {
+          throw new Error("Failed to fetch hero configuration");
+        }
+
+        const data = await response.json();
+
+        if (data && Object.keys(data).length > 0) {
+          // Populate fields if data exists
+          setTitle(data.Hero_title || "");
+          setSubtitle(data.Hero_subtitle || "");
+          setBgImage(data.Bg_Img_URL || "");
+          setButtonText(data.ButtonText || "");
+          setButtonBgColor(data.ButtonBgColor || "");
+          setButtonTextColor(data.ButtonTextColor || "");
+
+          setSaveType("PUT"); // Switch to PUT since data exists
+        } else {
+          setSaveType("POST"); // No data found; use POST
+        }
+      } catch (error) {
+        console.warn("No existing hero configuration found. Switching to POST mode.");
+        setSaveType("POST");
+      } finally {
+        setLoading(false);
+      }
     };
-    setHeroConfig(updatedConfig);
-    localStorage.setItem("heroConfig", JSON.stringify(updatedConfig));
-    navigate("/");
+
+    fetchHeroConfig();
+  }, [id]);
+
+  // Detect changes
+  useEffect(() => {
+    setHasChanges(true);
+  }, [title, subtitle, bgImage, buttonText, buttonBgColor, buttonTextColor]);
+
+  // Save changes via POST or PUT request
+  const saveChanges = async () => {
+    const updatedConfig = {
+      Hero_title: title,
+      Hero_subtitle: subtitle,
+      Bg_Img_URL: bgImage,
+      ButtonText: buttonText,
+      ButtonBgColor: buttonBgColor,
+      ButtonTextColor: buttonTextColor,
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/hero`, {
+        method: saveType,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "siteid": id, // Pass siteid for both POST and PUT
+        },
+        body: JSON.stringify(updatedConfig),
+      });
+
+      if (!response.ok) throw new Error(`Failed to ${saveType} hero configuration`);
+
+      setHasChanges(false);
+      alert(`Hero configuration ${saveType === "POST" ? "created" : "updated"} successfully!`);
+      setSaveType("PUT"); // Switch to PUT after successful POST
+    } catch (error) {
+      console.error(`Error saving hero configuration:`, error);
+      alert(`Failed to ${saveType} changes.`);
+    }
   };
+
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto px-6 py-10 flex flex-col lg:flex-row gap-10">
-      {/* Left Section: Editing Options */}
       <div className="lg:w-4/12">
         <h2 className="text-2xl font-bold mb-6">Update Hero Section</h2>
 
@@ -61,7 +130,7 @@ const HeroUpdate = ({ heroConfig, setHeroConfig }) => {
           />
         </div>
 
-        {/* Background Image URL */}
+        {/* Background Image */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">Background Image URL:</label>
           <input
@@ -83,7 +152,7 @@ const HeroUpdate = ({ heroConfig, setHeroConfig }) => {
           />
         </div>
 
-        {/* Button Colors */}
+        {/* Colors */}
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex gap-4">
             <div className="w-1/2">
@@ -105,37 +174,19 @@ const HeroUpdate = ({ heroConfig, setHeroConfig }) => {
               />
             </div>
           </div>
-
-          {/* Preset Color Option */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Quick Select Color:</label>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setButtonBgColor("#1e2737")}
-                className="w-10 h-10 rounded-md"
-                style={{ backgroundColor: "#1e2737" }}
-                aria-label="Preset Button Background Color"
-              />
-              <button
-                onClick={() => setButtonTextColor("#ffffff")}
-                className="w-10 h-10 rounded-md border"
-                style={{ backgroundColor: "#ffffff", borderColor: "#cccccc" }}
-                aria-label="Preset Button Text Color"
-              />
-            </div>
-          </div>
         </div>
 
-        {/* Save and Back Buttons */}
+        {/* Buttons */}
         <div className="flex gap-4">
           <button
             onClick={saveChanges}
             disabled={!hasChanges}
-            className={`px-6 py-3 rounded-md text-white transition ${hasChanges ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}`}
+            className={`px-6 py-3 rounded-md text-white transition ${
+              hasChanges ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
-            Save Changes
+            {saveType === "POST" ? "Create" : "Save Changes"}
           </button>
-
           <button
             onClick={() => navigate("/")}
             className="px-6 py-3 rounded-md bg-gray-600 text-white hover:bg-gray-700 transition"
@@ -145,7 +196,7 @@ const HeroUpdate = ({ heroConfig, setHeroConfig }) => {
         </div>
       </div>
 
-      {/* Right Section: Live Preview */}
+      {/* Live Preview */}
       <div className="lg:w-8/12">
         <h3 className="text-xl font-bold mb-4">Live Preview</h3>
         <div
