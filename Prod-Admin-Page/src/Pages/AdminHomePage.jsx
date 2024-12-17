@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from "../Constant";
+import { useAuth } from '../Auth/UseAuth';
 
 // Custom Card Components
 const Card = ({ children, className = '', onClick }) => (
@@ -68,7 +69,8 @@ const AdminHomePage = () => {
   const [recentUpdates, setRecentUpdates] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
+
+const {token} = useAuth()
 
   useEffect(() => {
     const fetchSitesCount = async () => {

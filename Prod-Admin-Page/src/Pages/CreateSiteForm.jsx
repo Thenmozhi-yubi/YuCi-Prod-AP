@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { BASE_URL } from "../Constant";
+import { useAuth } from "../Auth/UseAuth";
 
 const CreateSiteForm = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +16,11 @@ const CreateSiteForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate(); // Initialize the useNavigate hook
-
+  const {token} = useAuth()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
 
     try {
       const response = await fetch(`${BASE_URL}/api/sites`, {

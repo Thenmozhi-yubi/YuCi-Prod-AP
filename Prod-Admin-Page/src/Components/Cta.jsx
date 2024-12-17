@@ -14,10 +14,10 @@ const Cta = ({ ctaConfig }) => {
           <p className="mb-6">{content}</p>
           {/* Button */}
           <a
-            href={button.link}
+            href={button?.link}
             className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
           >
-            {button.text}
+            {button?.text}
           </a>
         </div>
         {/* Right Side */}

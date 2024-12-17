@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../Constant";
+import { useAuth } from "../Auth/UseAuth";
 
 const HeroUpdate = () => {
   const { id } = useParams(); // siteid passed via route params
@@ -16,7 +17,7 @@ const HeroUpdate = () => {
   const [saveType, setSaveType] = useState("POST"); // POST or PUT
 
   const navigate = useNavigate();
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
+const {token} = useAuth()
 
   // Fetch initial hero configuration
   useEffect(() => {

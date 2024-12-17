@@ -17,10 +17,10 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.setItem('footerConfig', JSON.stringify(config));
-    setFooterConfig(config);
-  }, [config, setFooterConfig]);
+  // useEffect(() => {
+  //   localStorage.setItem('footerConfig', JSON.stringify(config));
+  //   setFooterConfig(config);
+  // }, [config, setFooterConfig]);
 
   const handleInputChange = (field, value) => {
     setConfig({ ...config, [field]: value });

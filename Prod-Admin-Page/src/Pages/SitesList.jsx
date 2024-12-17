@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../Constant";
+import { useAuth } from "../Auth/UseAuth";
 
 const LoadingCard = () => (
   <div className="border border-gray-200 p-6 rounded-lg animate-pulse">
@@ -109,7 +110,7 @@ const SitesList = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
+ const {token} = useAuth()
 
   useEffect(() => {
     const fetchSites = async () => {
