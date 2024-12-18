@@ -19,9 +19,10 @@ import SitesList from "./Pages/SitesList";
 
 // Import new authentication components and provider
 import { AuthProvider } from "./Auth/UseAuth";
-import LoginPage from "./Pages/LoginPage";
-import SignUpPage from "./Pages/SignUpPage";
+
+// import SignUpPage from "./Pages/SignUpPage";
 import PrivateRoute from "./components/PrivateRoute";
+import AuthPage from "./Pages/LoginPage";
 
 function App() {
   const [navConfig, setNavConfig] = useState(configData.navConfig);
@@ -82,8 +83,8 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* Authentication Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<AuthPage />} />
+          {/* <Route path="/signup" element={<SignUpPage />} /> */}
 
           {/* Protected Admin Routes */}
           <Route 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Auth/UseAuth';
 
 const SignUpPage = () => {
@@ -9,7 +9,7 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const { register } = useAuth();
-
+  const navigate = useNavigate(); 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -25,7 +25,11 @@ const SignUpPage = () => {
       setError('Registration failed. Please try again.');
     }
   };
-
+  const handleSignupLinkClick = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    console.log('Signup link clicked'); // Add console log
+    navigate('/login'); // Programmatic navigation
+  };
   return (
     <div 
       className="min-h-screen flex items-center justify-center p-6"
@@ -164,6 +168,7 @@ const SignUpPage = () => {
               Already have an account? {' '}
               <Link 
                 to="/login" 
+                 onClick={handleSignupLinkClick} 
                 className="font-bold"
                 style={{ color: '#fd7149' }}
               >
