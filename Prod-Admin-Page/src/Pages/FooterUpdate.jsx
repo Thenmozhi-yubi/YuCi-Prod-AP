@@ -1,81 +1,154 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BASE_URL } from "../Constant";
 import Footer from '../components/Footer';
 
-const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
-  const [config, setConfig] = useState(footerConfig || {
+const FooterUpdate = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjAyMDVlMzMyMmI0ZGVhYTY1ZjU2MyIsImlhdCI6MTczNDM1MzAyMywiZXhwIjoxNzM0NDM5NDIzfQ.i73VxprwYeJQ82bIcRUFI4_G95qQqbioW2jerDyJ8lY";
+
+  const [config, setConfig] = useState({
     logo: '',
     content: '',
     socialImages: [],
-    buttons: [], // Buttons array
+    buttons: [],
     products: { title: '', links: [] },
     company: { title: '', links: [] },
     resources: { title: '', links: [] },
     security: { title: '', links: [] },
     help: { title: '', links: [] },
   });
+  const [loading, setLoading] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [saveType, setSaveType] = useState("POST");
 
-  const navigate = useNavigate();
-
+  // Fetch initial footer configuration
   useEffect(() => {
-    localStorage.setItem('footerConfig', JSON.stringify(config));
-    setFooterConfig(config);
-  }, [config, setFooterConfig]);
+    const fetchFooterConfig = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/footer`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "siteid": id,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch footer configuration");
+        }
+
+        const data = await response.json();
+        if (data && Object.keys(data).length > 0) {
+          setConfig(data);
+          setSaveType("PUT"); // Data exists, so we'll use PUT
+        } else {
+          setSaveType("POST"); // No data, so we'll use POST
+        }
+      } catch (error) {
+        console.warn("No existing footer configuration found. Switching to POST mode.");
+        setSaveType("POST");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFooterConfig();
+  }, [id]);
+
+  // Detect changes
+  useEffect(() => {
+    if (!loading) {
+      setHasChanges(true);
+    }
+  }, [config, loading]);
 
   const handleInputChange = (field, value) => {
-    setConfig({ ...config, [field]: value });
+    setConfig(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSectionChange = (sectionName, field, value) => {
-    setConfig({
-      ...config,
-      [sectionName]: { ...config[sectionName], [field]: value },
-    });
+    setConfig(prev => ({
+      ...prev,
+      [sectionName]: { ...prev[sectionName], [field]: value },
+    }));
   };
 
   const handleLinkChange = (sectionName, index, field, value) => {
     const updatedLinks = [...config[sectionName].links];
     updatedLinks[index][field] = value;
-    setConfig({
-      ...config,
-      [sectionName]: { ...config[sectionName], links: updatedLinks },
-    });
+    setConfig(prev => ({
+      ...prev,
+      [sectionName]: { ...prev[sectionName], links: updatedLinks },
+    }));
   };
 
   const handleButtonChange = (index, field, value) => {
     const updatedButtons = [...config.buttons];
     updatedButtons[index][field] = value;
-    setConfig({ ...config, buttons: updatedButtons });
+    setConfig(prev => ({ ...prev, buttons: updatedButtons }));
   };
 
   const addButton = () => {
-    const updatedButtons = [...config.buttons, { text: '', link: '' }];
-    setConfig({ ...config, buttons: updatedButtons });
+    setConfig(prev => ({
+      ...prev,
+      buttons: [...prev.buttons, { text: '', link: '' }]
+    }));
   };
 
   const removeButton = (index) => {
-    const updatedButtons = config.buttons.filter((_, i) => i !== index);
-    setConfig({ ...config, buttons: updatedButtons });
+    setConfig(prev => ({
+      ...prev,
+      buttons: prev.buttons.filter((_, i) => i !== index)
+    }));
   };
 
   const addLink = (sectionName) => {
-    const updatedLinks = [...config[sectionName].links, { text: '', url: '' }];
-    setConfig({
-      ...config,
-      [sectionName]: { ...config[sectionName], links: updatedLinks },
-    });
+    setConfig(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        links: [...prev[sectionName].links, { text: '', url: '' }]
+      }
+    }));
   };
 
   const removeLink = (sectionName, index) => {
-    const updatedLinks = config[sectionName].links.filter((_, i) => i !== index);
-    setConfig({
-      ...config,
-      [sectionName]: { ...config[sectionName], links: updatedLinks },
-    });
+    setConfig(prev => ({
+      ...prev,
+      [sectionName]: {
+        ...prev[sectionName],
+        links: prev[sectionName].links.filter((_, i) => i !== index)
+      }
+    }));
   };
 
-  const saveChanges = () => {
-    navigate('/'); // Redirect to home page
+  const saveChanges = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/footer`, {
+        method: saveType,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "siteid": id,
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (!response.ok) throw new Error(`Failed to ${saveType} footer configuration`);
+
+      const data = await response.json();
+      setConfig(data.data);
+      setHasChanges(false);
+      alert(`Footer configuration ${saveType === "POST" ? "created" : "updated"} successfully!`);
+      setSaveType("PUT"); // After successful POST, switch to PUT for future saves
+      navigate('/');
+    } catch (error) {
+      console.error(`Error ${saveType === "POST" ? "creating" : "updating"} footer configuration:`, error);
+      alert(`Failed to ${saveType.toLowerCase()} changes.`);
+    }
   };
 
   const renderSectionEditor = (sectionName, sectionTitle) => (
@@ -106,7 +179,7 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
           />
           <button
             onClick={() => removeLink(sectionName, index)}
-            className="text-red-500 text-sm"
+            className="text-red-500 text-sm hover:text-red-700"
           >
             Remove
           </button>
@@ -114,91 +187,112 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
       ))}
       <button
         onClick={() => addLink(sectionName)}
-        className="text-blue-500 text-sm"
+        className="text-blue-500 text-sm hover:text-blue-700"
       >
         + Add Link
       </button>
     </div>
   );
 
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
   return (
     <div className="grid grid-cols-12 gap-6 p-6">
       {/* Editing Panel */}
       <div className="col-span-12 md:col-span-4">
-        <h1 className="text-xl font-bold mb-4">Edit Footer</h1>
+        <div className="bg-gray-100 p-6 rounded-lg shadow">
+          <h1 className="text-xl font-bold mb-6">Edit Footer</h1>
 
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Logo URL</label>
-          <input
-            type="text"
-            value={config.logo || ''}
-            onChange={(e) => handleInputChange('logo', e.target.value)}
-            className="w-full border p-2 rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Footer Content</label>
-          <textarea
-            value={config.content || ''}
-            onChange={(e) => handleInputChange('content', e.target.value)}
-            className="w-full border p-2 rounded"
-          ></textarea>
-        </div>
-
-        {/* Buttons Editor */}
-        <div className="mb-6 border-b pb-4">
-          <h3 className="text-lg font-semibold mb-2">Buttons</h3>
-          {config.buttons.map((button, index) => (
-            <div key={index} className="flex space-x-2 mb-2">
+          <div className="space-y-6">
+            <div>
+              <label className="block font-semibold mb-2">Logo URL</label>
               <input
                 type="text"
-                placeholder="Button Text"
-                value={button.text}
-                onChange={(e) => handleButtonChange(index, 'text', e.target.value)}
-                className="w-1/2 border p-2 rounded"
+                value={config.logo}
+                onChange={(e) => handleInputChange('logo', e.target.value)}
+                className="w-full border p-2 rounded-md"
               />
-              <input
-                type="text"
-                placeholder="Button Link"
-                value={button.link}
-                onChange={(e) => handleButtonChange(index, 'link', e.target.value)}
-                className="w-1/2 border p-2 rounded"
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-2">Footer Content</label>
+              <textarea
+                value={config.content}
+                onChange={(e) => handleInputChange('content', e.target.value)}
+                className="w-full border p-2 rounded-md min-h-[100px]"
               />
+            </div>
+
+            {/* Buttons Editor */}
+            <div className="border-b pb-4">
+              <h3 className="text-lg font-semibold mb-2">Buttons</h3>
+              {config.buttons.map((button, index) => (
+                <div key={index} className="flex space-x-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Button Text"
+                    value={button.text}
+                    onChange={(e) => handleButtonChange(index, 'text', e.target.value)}
+                    className="w-1/2 border p-2 rounded-md"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Button Link"
+                    value={button.link}
+                    onChange={(e) => handleButtonChange(index, 'link', e.target.value)}
+                    className="w-1/2 border p-2 rounded-md"
+                  />
+                  <button
+                    onClick={() => removeButton(index)}
+                    className="text-red-500 text-sm hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
               <button
-                onClick={() => removeButton(index)}
-                className="text-red-500 text-sm"
+                onClick={addButton}
+                className="text-blue-500 text-sm hover:text-blue-700"
               >
-                Remove
+                + Add Button
               </button>
             </div>
-          ))}
-          <button
-            onClick={addButton}
-            className="text-blue-500 text-sm"
-          >
-            + Add Button
-          </button>
+
+            {renderSectionEditor('products', 'Products')}
+            {renderSectionEditor('company', 'Company')}
+            {renderSectionEditor('resources', 'Resources')}
+            {renderSectionEditor('security', 'Security')}
+            {renderSectionEditor('help', 'Help')}
+
+            <div className="flex gap-4">
+              <button
+                onClick={saveChanges}
+                disabled={!hasChanges}
+                className={`px-6 py-3 rounded-md text-white transition flex-1 ${
+                  hasChanges ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {saveType === "POST" ? "Create Footer" : "Save Changes"}
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="px-6 py-3 rounded-md bg-gray-600 text-white hover:bg-gray-700 transition"
+              >
+                Back
+              </button>
+            </div>
+          </div>
         </div>
-
-        {renderSectionEditor('products', 'Products')}
-        {renderSectionEditor('company', 'Company')}
-        {renderSectionEditor('resources', 'Resources')}
-        {renderSectionEditor('security', 'Security')}
-        {renderSectionEditor('help', 'Help')}
-
-        <button
-          onClick={saveChanges}
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
-        >
-          Save Changes
-        </button>
       </div>
 
       {/* Preview Panel */}
       <div className="col-span-12 md:col-span-8">
-        <h2 className="text-lg font-bold mb-4">Footer Preview</h2>
-        <Footer footerConfig={config} />
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-2xl font-bold mb-6">Footer Preview</h2>
+          <Footer footerConfig={config} />
+        </div>
       </div>
     </div>
   );
