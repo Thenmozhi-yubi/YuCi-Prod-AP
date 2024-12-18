@@ -20,48 +20,51 @@ const HeroUpdate = () => {
 const {token} = useAuth()
 
   // Fetch initial hero configuration
-  useEffect(() => {
-    const fetchHeroConfig = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/hero`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-            "siteid": id, // Pass siteid as a custom header
-          },
-        });
+  // Fetch initial hero configuration
+useEffect(() => {
+  const fetchHeroConfig = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/hero`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "siteid": id,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch hero configuration");
-        }
-
-        const data = await response.json();
-
-        if (data && Object.keys(data).length > 0) {
-          // Populate fields if data exists
-          setTitle(data.Hero_title || "");
-          setSubtitle(data.Hero_subtitle || "");
-          setBgImage(data.Bg_Img_URL || "");
-          setButtonText(data.ButtonText || "");
-          setButtonBgColor(data.ButtonBgColor || "");
-          setButtonTextColor(data.ButtonTextColor || "");
-
-          setSaveType("PUT"); // Switch to PUT since data exists
-        } else {
-          setSaveType("POST"); // No data found; use POST
-        }
-      } catch (error) {
-        console.warn("No existing hero configuration found. Switching to POST mode.");
-        setSaveType("POST");
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch hero configuration");
       }
-    };
 
-    fetchHeroConfig();
-  }, [id]);
+      const responseData = await response.json();
+      
+      // Since the API returns {data: heroes} and heroes is an array
+      const heroData = responseData.data?.[0]; // Get the first hero if it exists
 
+      if (heroData) {
+        // Populate fields if data exists
+        setTitle(heroData.Hero_title || "");
+        setSubtitle(heroData.Hero_subtitle || "");
+        setBgImage(heroData.Bg_Img_URL || "");
+        setButtonText(heroData.ButtonText || "");
+        setButtonBgColor(heroData.ButtonBgColor || "");
+        setButtonTextColor(heroData.ButtonTextColor || "");
+
+        setSaveType("PUT"); // Switch to PUT since data exists
+      } else {
+        setSaveType("POST"); // No data found; use POST
+      }
+    } catch (error) {
+      console.error("Error fetching hero configuration:", error);
+      setSaveType("POST");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchHeroConfig();
+}, [id, token]);
   // Detect changes
   useEffect(() => {
     setHasChanges(true);
