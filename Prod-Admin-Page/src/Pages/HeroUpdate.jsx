@@ -15,7 +15,7 @@ const HeroUpdate = () => {
   const [loading, setLoading] = useState(true);
   const [hasChanges, setHasChanges] = useState(false);
   const [saveType, setSaveType] = useState("POST"); // POST or PUT
-
+  const [selectedHero, setSelectedHero] = useState("");
   const navigate = useNavigate();
 const {token} = useAuth()
 
@@ -37,31 +37,28 @@ useEffect(() => {
         throw new Error("Failed to fetch hero configuration");
       }
 
-      const responseData = await response.json();
-      
-      // Since the API returns {data: heroes} and heroes is an array
-      const heroData = responseData.data?.[0]; // Get the first hero if it exists
+        const data = await response.json();
 
-      if (heroData) {
-        // Populate fields if data exists
-        setTitle(heroData.Hero_title || "");
-        setSubtitle(heroData.Hero_subtitle || "");
-        setBgImage(heroData.Bg_Img_URL || "");
-        setButtonText(heroData.ButtonText || "");
-        setButtonBgColor(heroData.ButtonBgColor || "");
-        setButtonTextColor(heroData.ButtonTextColor || "");
+        if (data && Object.keys(data).length > 0) {
+          // Populate fields if data exists
+          setTitle(data.Hero_title || "");
+          setSubtitle(data.Hero_subtitle || "");
+          setBgImage(data.Bg_Img_URL || "");
+          setButtonText(data.ButtonText || "");
+          setButtonBgColor(data.ButtonBgColor || "");
+          setButtonTextColor(data.ButtonTextColor || "");
 
-        setSaveType("PUT"); // Switch to PUT since data exists
-      } else {
-        setSaveType("POST"); // No data found; use POST
+          setSaveType("PUT"); // Switch to PUT since data exists
+        } else {
+          setSaveType("POST"); // No data found; use POST
+        }
+      } catch (error) {
+        console.warn("No existing hero configuration found. Switching to POST mode.");
+        setSaveType("POST");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching hero configuration:", error);
-      setSaveType("POST");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   fetchHeroConfig();
 }, [id, token]);
@@ -79,6 +76,7 @@ useEffect(() => {
       ButtonText: buttonText,
       ButtonBgColor: buttonBgColor,
       ButtonTextColor: buttonTextColor,
+      selectedHero:selectedHero
     };
 
     try {
@@ -111,7 +109,23 @@ useEffect(() => {
     <div className="container mx-auto px-6 py-10 flex flex-col lg:flex-row gap-10">
       <div className="lg:w-4/12">
         <h2 className="text-2xl font-bold mb-6">Update Hero Section</h2>
-
+        <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Select Template:</label>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setSelectedHero("1")}
+                className={`px-4 py-2 rounded-md ${selectedHero === "1" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
+                Template 1
+              </button>
+              <button
+                onClick={() => setSelectedHero("2")}
+                className={`px-4 py-2 rounded-md ${selectedHero === "2" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
+                Template 2
+              </button>
+            </div>
+          </div>
         {/* Title */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">Hero Title:</label>

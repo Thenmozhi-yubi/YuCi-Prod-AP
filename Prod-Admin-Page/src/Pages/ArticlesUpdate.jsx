@@ -41,6 +41,7 @@ const ArticlesUpdate = () => {
         const data = await response.json();
         if (data && data.length > 0) {
           setArticles(data);
+          setSelectedArticle(data.selectedArticle)
           setSaveType("PUT"); // Data exists, so we'll use PUT
         } else {
           setSaveType("POST"); // No data, so we'll use POST
@@ -88,6 +89,7 @@ const ArticlesUpdate = () => {
       setCurrentEditIndex(null);
     }
   };
+  const [selectedArticle, setSelectedArticle] = useState("1");
 
   const saveChanges = async () => {
     try {
@@ -95,14 +97,17 @@ const ArticlesUpdate = () => {
         method: saveType,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-          "siteid": id,
+          Authorization: `Bearer ${token}`,
+          siteid: id,
         },
-        body: JSON.stringify({ articles }),
+        body: JSON.stringify({
+          selectedArticle,
+          articles,
+        }),
       });
-
+  
       if (!response.ok) throw new Error(`Failed to ${saveType} articles`);
-
+  
       const data = await response.json();
       setArticles(data.data || []);
       setHasChanges(false);
@@ -113,7 +118,7 @@ const ArticlesUpdate = () => {
       alert(`Failed to ${saveType.toLowerCase()} changes.`);
     }
   };
-
+  
   if (loading) {
     return <div className="text-center py-10">Loading...</div>;
   }
@@ -121,6 +126,26 @@ const ArticlesUpdate = () => {
   return (
     <div className="container mx-auto py-10 px-4">
       <h2 className="text-center text-4xl mb-8 font-bold">Update Articles</h2>
+      <div className="flex space-x-4">
+      <div className="flex space-x-4 mb-6">
+        <button
+          onClick={() => setSelectedArticle("1")}
+          className={`px-4 py-2 rounded-md ${
+            selectedArticle === "1" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Template 1
+        </button>
+        <button
+          onClick={() => setSelectedArticle("2")}
+          className={`px-4 py-2 rounded-md ${
+            selectedArticle === "2" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Template 2
+        </button>
+      </div>
+</div>
 
       <div className="grid grid-cols-12 gap-6">
         {/* Left Section: Edit/Add Article Form */}

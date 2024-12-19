@@ -7,7 +7,7 @@ import { useAuth } from "../Auth/UseAuth";
 const FeatureUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
- const {token} = useAuth()
+  const {token} = useAuth()
 
   const [formData, setFormData] = useState({
     title: "",
@@ -16,8 +16,12 @@ const FeatureUpdate = () => {
   });
   const [features, setFeatures] = useState([]);
   const [loading, setLoading] = useState(true);
+  
   const [hasChanges, setHasChanges] = useState(false);
   const [saveType, setSaveType] = useState("POST");
+
+  // New state for selected feature template
+  const [selectedFeatureTemplate, setSelectedFeatureTemplate] = useState("1");
 
   // Fetch initial feature configuration
   useEffect(() => {
@@ -46,6 +50,8 @@ const FeatureUpdate = () => {
             description: ""
           });
           setFeatures(data.features || []);
+          // Set the previously selected template if available
+          setSelectedFeatureTemplate(data.selectedfeature || "1");
           setSaveType("PUT"); // Switch to PUT since data exists
         } else {
           setSaveType("POST"); // No data found; use POST
@@ -64,7 +70,7 @@ const FeatureUpdate = () => {
   // Detect changes
   useEffect(() => {
     setHasChanges(true);
-  }, [formData, features]);
+  }, [formData, features, selectedFeatureTemplate]);
 
   const handleHeadingChange = (e) => {
     const { name, value } = e.target;
@@ -100,6 +106,7 @@ const FeatureUpdate = () => {
     const updatedConfig = {
       heading: formData,
       features,
+      selectedfeature: selectedFeatureTemplate, // Add selected feature template
     };
 
     try {
@@ -134,6 +141,20 @@ const FeatureUpdate = () => {
         {/* Editing Section */}
         <div className="col-span-12 lg:col-span-4">
           <h2 className="text-2xl font-bold mb-4">Update Features</h2>
+          
+          {/* Feature Template Selection */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Select Feature Template:</label>
+            <select
+              value={selectedFeatureTemplate}
+              onChange={(e) => setSelectedFeatureTemplate(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              <option value="1">Template 1</option>
+              <option value="2">Template 2</option>
+            </select>
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-2">Heading Title:</label>
             <input
@@ -243,7 +264,11 @@ const FeatureUpdate = () => {
         <div className="col-span-12 lg:col-span-8">
           <h3 className="text-xl font-bold mb-4">Live Preview</h3>
           <div className="border p-4 rounded-md">
-            <Feature featureConfig={{ heading: formData, features }} />
+            <Feature featureConfig={{ 
+              heading: formData, 
+              features,
+              selectedfeature: selectedFeatureTemplate // Pass selected template to preview
+            }} />
           </div>
         </div>
       </div>

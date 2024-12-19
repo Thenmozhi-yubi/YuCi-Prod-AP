@@ -10,10 +10,11 @@ const NavUpdate = () => {
   const [useCases, setUseCases] = useState([]);
   const [ctaText, setCtaText] = useState("");
   const [ctaLink, setCtaLink] = useState("");
+  const [selectedNav, setSelectedNav] = useState("");
   const [loading, setLoading] = useState(true);
   const [isNew, setIsNew] = useState(false); // Flag to track if this is a new entry
   const navigate = useNavigate();
- const {token} = useAuth()
+ const {token} = useAuth() 
 
   // Load the config from the API on initial mount
   useEffect(() => {
@@ -35,6 +36,7 @@ const NavUpdate = () => {
             setUseCases(topNavConfig.use_cases || []);
             setCtaText(topNavConfig.CTA_Text || "");
             setCtaLink(topNavConfig.CTA_Link || "");
+            setSelectedNav(topNavConfig.selectedtopNav || "")
           } else {
             setIsNew(true); // Set to true if no data exists
           }
@@ -61,6 +63,7 @@ const NavUpdate = () => {
       use_cases: useCases,
       CTA_Text: ctaText,
       CTA_Link: ctaLink,
+      selectedtopNav: selectedNav
     };
 
     try {
@@ -129,7 +132,23 @@ const NavUpdate = () => {
         {/* Left Column (Edit Options) */}
         <div className="col-span-4">
           <h2 className="text-2xl font-bold mb-4">Configure TopNav</h2>
-
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Select Template:</label>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setSelectedNav("1")}
+                className={`px-4 py-2 rounded-md ${selectedNav === "1" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
+                Template 1
+              </button>
+              <button
+                onClick={() => setSelectedNav("2")}
+                className={`px-4 py-2 rounded-md ${selectedNav === "2" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
+                Template 2
+              </button>
+            </div>
+          </div>
           {/* Logo Input */}
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-2">Logo URL:</label>
