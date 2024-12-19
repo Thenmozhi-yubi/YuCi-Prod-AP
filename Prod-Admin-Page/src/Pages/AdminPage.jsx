@@ -9,12 +9,14 @@ import TrustUpdate from "../Pages/TrustUpdate";
 import ArticlesUpdate from "../Pages/ArticlesUpdate";
 import FooterUpdate from "../Pages/FooterUpdate";
 import CtaUpdate from "../Pages/CtaUpdate";
+import OfferUpdate from "../Pages/offerUpdate"; // Add this import
 
 // Navigation items configuration
 const navItems = [
   { id: 'topnav', label: 'Top Navigation', icon: 'M4 6h16M4 12h16M4 18h16' },
   { id: 'hero', label: 'Hero Section', icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z' },
   { id: 'feature', label: 'Features', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
+  { id: 'offer', label: 'Offers', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }, // Add this offer section
   { id: 'kpi', label: 'KPI', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
   { id: 'video', label: 'Video Section', icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z' },
   { id: 'trust', label: 'Trust Section', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
@@ -43,10 +45,6 @@ const NavItem = ({ item, isActive, onClick }) => (
   </div>
 );
 
-
-
-// Add similar components for other sections...
-
 const AdminPage = () => {
   const { id } = useParams();
   const [activeSection, setActiveSection] = useState('topnav');
@@ -60,6 +58,8 @@ const AdminPage = () => {
         return <HeroUpdate siteId={id} />;
       case 'feature':
         return <FeatureUpdate siteId={id} />;
+      case 'offer': // Add this case
+        return <OfferUpdate siteId={id} />;
       case 'kpi':
         return <KpiUpdate siteId={id} />;
       case 'video':
