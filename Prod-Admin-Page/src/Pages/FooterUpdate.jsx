@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
-
 const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
   const [config, setConfig] = useState(footerConfig || {
     logo: '',
@@ -14,25 +13,20 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
     security: { title: '', links: [] },
     help: { title: '', links: [] },
   });
-
   const navigate = useNavigate();
-
   // useEffect(() => {
   //   localStorage.setItem('footerConfig', JSON.stringify(config));
   //   setFooterConfig(config);
   // }, [config, setFooterConfig]);
-
   const handleInputChange = (field, value) => {
     setConfig({ ...config, [field]: value });
   };
-
   const handleSectionChange = (sectionName, field, value) => {
     setConfig({
       ...config,
       [sectionName]: { ...config[sectionName], [field]: value },
     });
   };
-
   const handleLinkChange = (sectionName, index, field, value) => {
     const updatedLinks = [...config[sectionName].links];
     updatedLinks[index][field] = value;
@@ -41,23 +35,19 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
       [sectionName]: { ...config[sectionName], links: updatedLinks },
     });
   };
-
   const handleButtonChange = (index, field, value) => {
     const updatedButtons = [...config.buttons];
     updatedButtons[index][field] = value;
     setConfig({ ...config, buttons: updatedButtons });
   };
-
   const addButton = () => {
     const updatedButtons = [...config.buttons, { text: '', link: '' }];
     setConfig({ ...config, buttons: updatedButtons });
   };
-
   const removeButton = (index) => {
     const updatedButtons = config.buttons.filter((_, i) => i !== index);
     setConfig({ ...config, buttons: updatedButtons });
   };
-
   const addLink = (sectionName) => {
     const updatedLinks = [...config[sectionName].links, { text: '', url: '' }];
     setConfig({
@@ -65,7 +55,6 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
       [sectionName]: { ...config[sectionName], links: updatedLinks },
     });
   };
-
   const removeLink = (sectionName, index) => {
     const updatedLinks = config[sectionName].links.filter((_, i) => i !== index);
     setConfig({
@@ -73,11 +62,9 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
       [sectionName]: { ...config[sectionName], links: updatedLinks },
     });
   };
-
   const saveChanges = () => {
     navigate('/'); // Redirect to home page
   };
-
   const renderSectionEditor = (sectionName, sectionTitle) => (
     <div className="mb-6 border-b pb-4">
       <h3 className="text-lg font-semibold mb-2">{sectionTitle}</h3>
@@ -120,13 +107,11 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
       </button>
     </div>
   );
-
   return (
     <div className="grid grid-cols-12 gap-6 p-6">
       {/* Editing Panel */}
       <div className="col-span-12 md:col-span-4">
         <h1 className="text-xl font-bold mb-4">Edit Footer</h1>
-
         <div className="mb-4">
           <label className="block font-semibold mb-1">Logo URL</label>
           <input
@@ -136,7 +121,6 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
             className="w-full border p-2 rounded"
           />
         </div>
-
         <div className="mb-4">
           <label className="block font-semibold mb-1">Footer Content</label>
           <textarea
@@ -145,7 +129,6 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
             className="w-full border p-2 rounded"
           ></textarea>
         </div>
-
         {/* Buttons Editor */}
         <div className="mb-6 border-b pb-4">
           <h3 className="text-lg font-semibold mb-2">Buttons</h3>
@@ -180,13 +163,11 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
             + Add Button
           </button>
         </div>
-
         {renderSectionEditor('products', 'Products')}
         {renderSectionEditor('company', 'Company')}
         {renderSectionEditor('resources', 'Resources')}
         {renderSectionEditor('security', 'Security')}
         {renderSectionEditor('help', 'Help')}
-
         <button
           onClick={saveChanges}
           className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-4"
@@ -194,7 +175,6 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
           Save Changes
         </button>
       </div>
-
       {/* Preview Panel */}
       <div className="col-span-12 md:col-span-8">
         <h2 className="text-lg font-bold mb-4">Footer Preview</h2>
@@ -203,5 +183,13 @@ const FooterUpdate = ({ footerConfig, setFooterConfig }) => {
     </div>
   );
 };
-
 export default FooterUpdate;
+
+
+
+
+
+
+
+
+

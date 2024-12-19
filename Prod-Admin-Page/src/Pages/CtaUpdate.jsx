@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL } from '../Constant';
 import { useAuth } from '../Auth/UseAuth';
-
 const CtaUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
-
   // State management
   const [formData, setFormData] = useState({
     heading: '',
@@ -21,7 +19,6 @@ const CtaUpdate = () => {
   const [loading, setLoading] = useState(true);
   const [hasChanges, setHasChanges] = useState(false);
   const [saveType, setSaveType] = useState('POST');
-
   // Fetch CTA data
   useEffect(() => {
     const fetchCtaConfig = async () => {
@@ -33,17 +30,14 @@ const CtaUpdate = () => {
             'siteid': id
           },
         });
-
         if (response.status === 404) {
           setSaveType('POST');
           setLoading(false);
           return;
         }
-
         if (!response.ok) {
           throw new Error('Failed to fetch CTA configuration');
         }
-
         const data = await response.json();
         if (data.ctaConfig) {
           setFormData(data.ctaConfig);
@@ -55,14 +49,11 @@ const CtaUpdate = () => {
         setLoading(false);
       }
     };
-
     fetchCtaConfig();
   }, [id]);
-
   // Handle form changes
   const handleChange = (e, buttonField = false) => {
     setHasChanges(true);
-
     if (buttonField) {
       setFormData(prev => ({
         ...prev,
@@ -78,7 +69,6 @@ const CtaUpdate = () => {
       }));
     }
   };
-
   // Save changes
   const handleSave = async () => {
     try {
@@ -91,9 +81,7 @@ const CtaUpdate = () => {
         },
         body: JSON.stringify(formData)
       });
-
       if (!response.ok) throw new Error(`Failed to ${saveType} CTA configuration`);
-
       const result = await response.json();
       alert(result.message);
       setHasChanges(false);
@@ -103,7 +91,6 @@ const CtaUpdate = () => {
       alert('Failed to save changes');
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -111,14 +98,12 @@ const CtaUpdate = () => {
       </div>
     );
   }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Form Section */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">CTA Configuration</h2>
-
           <div className="space-y-6">
             {/* Heading */}
             <div>
@@ -133,7 +118,6 @@ const CtaUpdate = () => {
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Content */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -147,7 +131,6 @@ const CtaUpdate = () => {
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Button Text */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -161,7 +144,6 @@ const CtaUpdate = () => {
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Button Link */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -175,7 +157,6 @@ const CtaUpdate = () => {
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Image URL */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -189,7 +170,6 @@ const CtaUpdate = () => {
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Action Buttons */}
             <div className="flex space-x-4">
               <button
@@ -211,7 +191,6 @@ const CtaUpdate = () => {
             </div>
           </div>
         </div>
-
         {/* Preview Section */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Live Preview</h2>
@@ -253,5 +232,4 @@ const CtaUpdate = () => {
     </div>
   );
 };
-
 export default CtaUpdate;
